@@ -173,6 +173,63 @@ describe("validator.js", () => {
         });
     });
 
+    describe("maximum", () => {
+        it("should return null when no validation errors are found", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({age: "maximum:99"});
+            const data          = {age: 99};
+            const result        = validator.validate(data);
+            const expectation   = null
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when the value is a string", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({age: "maximum:-10"});
+            const data          = {age: "age"};
+            const result        = validator.validate(data);
+            const expectation   = ["age should be at most equals to -10."];
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when there is one", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({age: "maximum:99"});
+            const data          = {age: 100};
+            const result        = validator.validate(data);
+            const expectation   = ["age should be at most equals to 99."];
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should throw an error if the rule value is not defined", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({age: "maximum"});
+            const data = {age: 100};
+            const callback = () => validator.validate(data);
+            const error = new Error("No value defined for the rule \"maximum\".");
+
+            expect(callback).toThrow(error);
+        });
+
+        it("should throw an error if the rule value is not a number", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({age: "maximum:age"});
+            const data = {age: 100};
+            const callback = () => validator.validate(data);
+            const error = new Error("No number defined for the rule \"maximum\".");
+
+            expect(callback).toThrow(error);
+        });
+    });
+
     describe("unrecognized rule", () => {
         it("should throw if encountering an unrecognized rule", () => {
             expect.assertions(1);
