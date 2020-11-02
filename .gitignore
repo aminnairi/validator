@@ -1,0 +1,5 @@
+/.config
+/.npm
+/node_modules
+/.node_repl_history
+/package-lock.json
