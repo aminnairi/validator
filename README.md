@@ -1,5 +1,7 @@
 # validator
 
+![Tests](https://github.com/aminnairi/validator/workflows/Tests/badge.svg?branch=latest)
+
 JavaScript library to validate an object of values based on a set of given rules.
 
 ## Requirements
