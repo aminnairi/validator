@@ -13,3 +13,6 @@ build:
 
 install:
 	docker-compose exec node npm install
+
+test:
+	docker-compose exec node npm run test
