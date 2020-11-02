@@ -85,6 +85,19 @@ export class Validator {
                     return errors;
                 }
 
+                if (rule.startsWith("minimum")) {
+                    const [, maybeMinimum] = rule.split(":");
+                    const minimum = Number(maybeMinimum) || 0;
+                    const valueNumber = Number(value) || 0;
+
+                    if (valueNumber < minimum) {
+                        return [
+                            ...errors,
+                            `${property} should be at least equals to ${minimum}.`
+                        ];
+                    }
+                }
+
                 throw new Error(`Unrecognized rule: ${rule}.`);
             }, []);
 
