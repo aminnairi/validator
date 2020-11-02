@@ -9,7 +9,7 @@ jobs:
 
         steps:
             - name: Checkout the project
-              run: actions/checkout@v2
+              uses: actions/checkout@v2
 
             - name: Start the Docker Compose services
               run: make start
