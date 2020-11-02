@@ -143,3 +143,21 @@ const goodData  = {age: 18};
 validator.validate(badData);    // ["age should be at least equal to 18."]
 validator.validate(goodData);   // null
 ```
+
+#### Maximum
+
+Check if the said attribute is at most equals to a given one.
+
+```javascript
+const {Validator} = require("@aminnairi/validator");
+
+const validator = new Validator({
+    age: "maximum:99"
+});
+
+const badData   = {age: 100};
+const goodData  = {age: 99};
+
+validator.validate(badData);    // ["age should be at most equal to 99."]
+validator.validate(goodData);   // null
+```
