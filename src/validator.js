@@ -49,7 +49,7 @@ exports.Validator = class Validator {
                 if (rule === "email") {
                     const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-                    if (typeof value !== "string" || !pattern.test(value)) {
+                    if (typeof value === "string" && !pattern.test(value)) {
                         return [
                             ...errors,
                             `${property} should be a valid email.`
@@ -62,7 +62,7 @@ exports.Validator = class Validator {
                 if (rule === "password") {
                     const pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/;
 
-                    if (typeof value !== "string" || !pattern.test(value)) {
+                    if (typeof value === "string" && !pattern.test(value)) {
                         return [
                             ...errors,
                             `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`
@@ -82,7 +82,7 @@ exports.Validator = class Validator {
                     const same = maybeSame;
                     const sameValue = data[same];
 
-                    if (sameValue !== value) {
+                    if (typeof value !== "undefined" && value !== null && sameValue !== value) {
                         return [
                             ...errors,
                             `${property} should be the same as ${same}.`
@@ -108,7 +108,7 @@ exports.Validator = class Validator {
                     const minimum = maybeMinimumNumber;
                     const valueNumber = Number(value) || 0;
 
-                    if (valueNumber < minimum) {
+                    if (typeof value !== "undefined" && value !== null && valueNumber < minimum) {
                         return [
                             ...errors,
                             `${property} should be at least equals to ${minimum}.`
@@ -134,7 +134,7 @@ exports.Validator = class Validator {
                     const maximum = maybeMaximumNumber;
                     const valueNumber = Number(value) || 0;
 
-                    if (valueNumber > maximum) {
+                    if (typeof value !== "undefined" && value !== null && valueNumber > maximum) {
                         return [
                             ...errors,
                             `${property} should be at most equals to ${maximum}.`
