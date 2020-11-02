@@ -36,6 +36,11 @@ const data = {
 
 const errors = validator.validate(data);
 
-console.log(errors);
-// [ "email should be a valid email.", "confirmation should be the same as password." ]
+if (null !== errors) {
+    console.error("Validation errors found.");
+    console.log(errors);
+    // [ "email should be a valid email.", "confirmation should be the same as password." ]
+} else {
+    console.log("No validation errors found.");
+}
 ```
