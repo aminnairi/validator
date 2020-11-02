@@ -118,6 +118,32 @@ exports.Validator = class Validator {
                     return errors;
                 }
 
+                if (rule.startsWith("maximum")) {
+                    const [, maybeMaximum] = rule.split(":");
+
+                    if (typeof maybeMaximum === "undefined") {
+                        throw new Error("No value defined for the rule \"maximum\".");
+                    }
+
+                    const maybeMaximumNumber = Number(maybeMaximum);
+
+                    if (!Number.isFinite(maybeMaximumNumber)) {
+                        throw new Error("No number defined for the rule \"maximum\".");
+                    }
+
+                    const maximum = maybeMaximumNumber;
+                    const valueNumber = Number(value) || 0;
+
+                    if (valueNumber > maximum) {
+                        return [
+                            ...errors,
+                            `${property} should be at most equals to ${maximum}.`
+                        ];
+                    }
+
+                    return errors;
+                }
+
                 throw new Error(`Unrecognized rule: ${rule}.`);
             }, []);
 
