@@ -25,6 +25,12 @@ $ make restart
 $ make install
 ```
 
+## Test
+
+```console
+$ make test
+```
+
 ## Build
 
 ```console
