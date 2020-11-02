@@ -19,3 +19,6 @@ jobs:
 
             - name: Test the library
               run: make test
+
+            - name: Stop the Docker Compose services
+              run: make stop
