@@ -123,3 +123,21 @@ const goodData  = {password: "abcABC123!@#", confirmation: "abcABC123!@#"};
 validator.validate(badData);    // ["confirmation should be the same as password."]
 validator.validate(goodData);   // null
 ```
+
+#### Minimum
+
+Check if the said attribute is at least equals to a given one.
+
+```javascript
+const {Validator} = require("@aminnairi/validator");
+
+const validator = new Validator({
+    age: "minimum:18"
+});
+
+const badData   = {age: 16};
+const goodData  = {age: 18};
+
+validator.validate(badData);    // ["age should be at least equal to 18."]
+validator.validate(goodData);   // null
+```
