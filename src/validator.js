@@ -1,7 +1,9 @@
+"use strict";
+
 /**
  * Rules for validating an object of values.
  */
-export class Validator {
+exports.Validator = class Validator {
     /**
      * @param {Record<string, string>} rules
      *
@@ -72,13 +74,18 @@ export class Validator {
 
                 if (rule.startsWith("same")) {
                     const [, maybeSame] = rule.split(":");
-                    const same = maybeSame || "";
+
+                    if (typeof maybeSame === "undefined") {
+                        throw new Error("No value defined for the rule \"same\".");
+                    }
+
+                    const same = maybeSame;
                     const sameValue = data[same];
 
                     if (sameValue !== value) {
                         return [
                             ...errors,
-                            `${property} should be the same as ${same}`
+                            `${property} should be the same as ${same}.`
                         ];
                     }
 
@@ -87,7 +94,18 @@ export class Validator {
 
                 if (rule.startsWith("minimum")) {
                     const [, maybeMinimum] = rule.split(":");
-                    const minimum = Number(maybeMinimum) || 0;
+
+                    if (typeof maybeMinimum === "undefined") {
+                        throw new Error("No value defined for the rule \"minimum\".");
+                    }
+
+                    const maybeMinimumNumber = Number(maybeMinimum);
+
+                    if (!Number.isFinite(maybeMinimumNumber)) {
+                        throw new Error("No number defined for the rule \"minimum\".");
+                    }
+
+                    const minimum = maybeMinimumNumber;
                     const valueNumber = Number(value) || 0;
 
                     if (valueNumber < minimum) {
@@ -96,6 +114,8 @@ export class Validator {
                             `${property} should be at least equals to ${minimum}.`
                         ];
                     }
+
+                    return errors;
                 }
 
                 throw new Error(`Unrecognized rule: ${rule}.`);
