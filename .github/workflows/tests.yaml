@@ -1,0 +1,21 @@
+name: Tests
+
+on: ["pull_request", "push"]
+
+jobs:
+    tests:
+        name: Test the library
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout the project
+              run: actions/checkout@v2
+
+            - name: Start the Docker Compose services
+              run: make start
+
+            - name: Install the dependencies
+              run: make install
+
+            - name: Test the library
+              run: make test
