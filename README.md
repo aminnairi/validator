@@ -175,3 +175,21 @@ const goodData  = {role: "USER"};
 validator.validate(badData);    // {role: ["role should be one of the following: ADMIN, USER, SUPERUSER."]}
 validator.validate(goodData);   // null
 ```
+
+#### Integer
+
+Check if the said attribute is an integer.
+
+```javascript
+const {Validator} = require("@aminnairi/validator");
+
+const validator = new Validator({
+    status: "integer"
+});
+
+const badData   = {status: "ACTIVE"};
+const goodData  = {status: 12};
+
+validator.validate(badData);    // {status: ["status should be an integer."]}
+validator.validate(goodData);   // null
+```
