@@ -144,6 +144,25 @@ exports.Validator = class Validator {
                     return errors;
                 }
 
+                if (rule.startsWith("in")) {
+                    const [, maybeIn] = rule.split(":"); // Let me in... LET ME IN!!!
+
+                    if (typeof maybeIn === "undefined") {
+                        throw new Error(`No value defined for the rule \"in\".`);
+                    }
+
+                    const inValues = maybeIn.split(",").map(value => value.trim());
+
+                    if (typeof value !== "undefined" && value !== null && !inValues.includes(value)) {
+                        return [
+                            ...errors,
+                            `${property} should be one of the following: ${inValues.join(", ")}.`
+                        ];
+                    }
+
+                    return errors;
+                }
+
                 throw new Error(`Unrecognized rule: ${rule}.`);
             }, []);
 
