@@ -49,6 +49,20 @@ exports.Validator = class Validator {
                     return errors;
                 }
 
+                if (rule === "integer") {
+                    if (typeof value !== "undefined" && value !== null && !Number.isInteger(Number(value))) {
+                        return {
+                            ...errors,
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} should be an integer.`
+                            ]
+                        };
+                    }
+
+                    return errors;
+                }
+
                 if (rule === "email") {
                     const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -74,6 +88,20 @@ exports.Validator = class Validator {
                             [property]: [
                                 ...errors[property] || [],
                                 `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`
+                            ]
+                        };
+                    }
+
+                    return errors;
+                }
+
+                if (rule === "date") {
+                    if (typeof value !== "undefined" && value !== null && Number.isNaN(Date.parse(value))) {
+                        return {
+                            ...errors,
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} should be a valid date.`
                             ]
                         };
                     }
@@ -186,19 +214,6 @@ exports.Validator = class Validator {
                     return errors;
                 }
 
-                if (rule === "integer") {
-                    if (typeof value !== "undefined" && value !== null && !Number.isInteger(Number(value))) {
-                        return {
-                            ...errors,
-                            [property]: [
-                                ...errors[property] || [],
-                                `${property} should be an integer.`
-                            ]
-                        };
-                    }
-
-                    return errors;
-                }
 
                 if (rule.startsWith("in")) {
                     const [, maybeIn] = rule.split(":"); // Let me in... LET ME IN!!!
@@ -224,7 +239,6 @@ exports.Validator = class Validator {
 
                 throw new Error(`Unrecognized rule: ${rule}.`);
             }, {});
-
 
             return {
                 ...errors,
