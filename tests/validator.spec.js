@@ -27,7 +27,7 @@ describe("validator.js", () => {
             const validator     = new Validator({username: "required"});
             const data          = {};
             const result        = validator.validate(data);
-            const expectation   = ["username is required."];
+            const expectation   = {username: ["username is required."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -51,7 +51,7 @@ describe("validator.js", () => {
             const validator     = new Validator({email: "email"});
             const data          = {email: "user@domain"};
             const result        = validator.validate(data);
-            const expectation   = ["email should be a valid email."];
+            const expectation   = {email: ["email should be a valid email."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -75,7 +75,7 @@ describe("validator.js", () => {
             const validator     = new Validator({password: "password"});
             const data          = {password: "abcABC123"};
             const result        = validator.validate(data);
-            const expectation   = ["password should contain at least digits, lower & upper letters, symbols and at least 8 characters."];
+            const expectation   = {password: ["password should contain at least digits, lower & upper letters, symbols and at least 8 characters."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -99,7 +99,7 @@ describe("validator.js", () => {
             const validator     = new Validator({password: "password", confirmation: "same:password"});
             const data          = {password: "abcABC123!@#", confirmation: "confirmation"};
             const result        = validator.validate(data);
-            const expectation   = ["confirmation should be the same as password."];
+            const expectation   = {confirmation: ["confirmation should be the same as password."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -134,7 +134,7 @@ describe("validator.js", () => {
             const validator     = new Validator({age: "minimum:18"});
             const data          = {age: "age"};
             const result        = validator.validate(data);
-            const expectation   = ["age should be at least equals to 18."];
+            const expectation   = {age: ["age should have at least 18 characters."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -145,7 +145,7 @@ describe("validator.js", () => {
             const validator     = new Validator({age: "minimum:18"});
             const data          = {age: 16};
             const result        = validator.validate(data);
-            const expectation   = ["age should be at least equals to 18."];
+            const expectation   = {age: ["age should be at least equals to 18."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -191,7 +191,7 @@ describe("validator.js", () => {
             const validator     = new Validator({age: "maximum:-10"});
             const data          = {age: "age"};
             const result        = validator.validate(data);
-            const expectation   = ["age should be at most equals to -10."];
+            const expectation   = {age: ["age should have at most -10 characters."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -202,7 +202,7 @@ describe("validator.js", () => {
             const validator     = new Validator({age: "maximum:99"});
             const data          = {age: 100};
             const result        = validator.validate(data);
-            const expectation   = ["age should be at most equals to 99."];
+            const expectation   = {age: ["age should be at most equals to 99."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -248,7 +248,7 @@ describe("validator.js", () => {
             const validator     = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
             const data          = {role: "GUEST"};
             const result        = validator.validate(data);
-            const expectation   = [`role should be one of the following: ADMIN, USER, SUPERUSER.`];
+            const expectation   = {role: [`role should be one of the following: ADMIN, USER, SUPERUSER.`]};
 
             expect(result).toStrictEqual(expectation);
         });
