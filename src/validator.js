@@ -36,11 +36,14 @@ exports.Validator = class Validator {
 
             const additionalErrors = rules.reduce((errors, rule) => {
                 if (rule === "required") {
-                    if (typeof value === "undefined") {
-                        return [
+                    if (typeof value === "undefined" || value === null) {
+                        return {
                             ...errors,
-                            `${property} is required.`
-                        ];
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} is required.`
+                            ]
+                        };
                     }
 
                     return errors;
@@ -50,10 +53,13 @@ exports.Validator = class Validator {
                     const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
                     if (typeof value === "string" && !pattern.test(value)) {
-                        return [
+                        return {
                             ...errors,
+                            [property]: [
+                                ...errors[property] || [],
                             `${property} should be a valid email.`
-                        ];
+                            ]
+                        };
                     }
 
                     return errors;
@@ -63,10 +69,13 @@ exports.Validator = class Validator {
                     const pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/;
 
                     if (typeof value === "string" && !pattern.test(value)) {
-                        return [
+                        return {
                             ...errors,
-                            `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`
-                        ];
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`
+                            ]
+                        };
                     }
 
                     return errors;
@@ -83,10 +92,13 @@ exports.Validator = class Validator {
                     const sameValue = data[same];
 
                     if (typeof value !== "undefined" && value !== null && sameValue !== value) {
-                        return [
+                        return {
                             ...errors,
-                            `${property} should be the same as ${same}.`
-                        ];
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} should be the same as ${same}.`
+                            ]
+                        };
                     }
 
                     return errors;
@@ -106,13 +118,28 @@ exports.Validator = class Validator {
                     }
 
                     const minimum = maybeMinimumNumber;
-                    const valueNumber = Number(value) || 0;
+                    const typeofValue = typeof value;
 
-                    if (typeof value !== "undefined" && value !== null && valueNumber < minimum) {
-                        return [
-                            ...errors,
-                            `${property} should be at least equals to ${minimum}.`
-                        ];
+                    if (typeofValue !== "undefined" && value !== null) {
+                        if (typeof value === "number" && value < minimum) {
+                            return {
+                                ...errors,
+                                [property]: [
+                                    ...errors[property] || [],
+                                    `${property} should be at least equals to ${minimum}.`
+                                ]
+                            };
+                        }
+
+                        if (typeofValue === "string" && value.length < minimum) {
+                            return {
+                                ...errors,
+                                [property]: [
+                                    ...errors[property] || [],
+                                    `${property} should have at least ${minimum} characters.`
+                                ]
+                            };
+                        }
                     }
 
                     return errors;
@@ -132,13 +159,28 @@ exports.Validator = class Validator {
                     }
 
                     const maximum = maybeMaximumNumber;
-                    const valueNumber = Number(value) || 0;
+                    const typeofValue = typeof value;
 
-                    if (typeof value !== "undefined" && value !== null && valueNumber > maximum) {
-                        return [
-                            ...errors,
-                            `${property} should be at most equals to ${maximum}.`
-                        ];
+                    if (typeofValue !== "undefined" && value !== null) {
+                        if (typeofValue === "number" && value > maximum) {
+                            return {
+                                ...errors,
+                                [property]: [
+                                    ...errors[property] || [],
+                                    `${property} should be at most equals to ${maximum}.`
+                                ]
+                            };
+                        }
+
+                        if (typeofValue === "string" && value.length > maximum) {
+                            return {
+                                ...errors,
+                                [property]: [
+                                    ...errors[property] || [],
+                                    `${property} should have at most ${maximum} characters.`
+                                ]
+                            };
+                        }
                     }
 
                     return errors;
@@ -154,25 +196,28 @@ exports.Validator = class Validator {
                     const inValues = maybeIn.split(",").map(value => value.trim());
 
                     if (typeof value !== "undefined" && value !== null && !inValues.includes(value)) {
-                        return [
+                        return {
                             ...errors,
-                            `${property} should be one of the following: ${inValues.join(", ")}.`
-                        ];
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} should be one of the following: ${inValues.join(", ")}.`
+                            ]
+                        };
                     }
 
                     return errors;
                 }
 
                 throw new Error(`Unrecognized rule: ${rule}.`);
-            }, []);
+            }, {});
 
-            return [
+            return {
                 ...errors,
                 ...additionalErrors
-            ];
-        }, []);
+            };
+        }, {});
 
-        if (validationErrors.length === 0) {
+        if (Object.keys(validationErrors).length === 0) {
             return null;
         }
 
