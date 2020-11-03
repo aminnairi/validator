@@ -193,3 +193,21 @@ const goodData  = {status: 12};
 validator.validate(badData);    // {status: ["status should be an integer."]}
 validator.validate(goodData);   // null
 ```
+
+#### Date
+
+Check if the said attribute is a date.
+
+```javascript
+const {Validator} = require("@aminnairi/validator");
+
+const validator = new Validator({
+    birthday: "date"
+});
+
+const badData   = {birthday: "tomorrow"};
+const goodData  = {birthday: new Date().toString()};
+
+validator.validate(badData);    // {birthday: ["birthday should be a valid date."]}
+validator.validate(goodData);   // null
+```
