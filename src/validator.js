@@ -186,6 +186,20 @@ exports.Validator = class Validator {
                     return errors;
                 }
 
+                if (rule === "integer") {
+                    if (typeof value !== "undefined" && value !== null && !Number.isInteger(Number(value))) {
+                        return {
+                            ...errors,
+                            [property]: [
+                                ...errors[property] || [],
+                                `${property} should be an integer.`
+                            ]
+                        };
+                    }
+
+                    return errors;
+                }
+
                 if (rule.startsWith("in")) {
                     const [, maybeIn] = rule.split(":"); // Let me in... LET ME IN!!!
 
@@ -210,6 +224,7 @@ exports.Validator = class Validator {
 
                 throw new Error(`Unrecognized rule: ${rule}.`);
             }, {});
+
 
             return {
                 ...errors,
