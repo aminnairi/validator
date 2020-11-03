@@ -1,6 +1,6 @@
 "use strict";
 
-const {Validator} = require("./validator.js");
+const {Validator} = require("../src/validator.js");
 
 describe("validator.js", () => {
     it("should return true", () => {
@@ -225,6 +225,41 @@ describe("validator.js", () => {
             const data = {age: 100};
             const callback = () => validator.validate(data);
             const error = new Error("No number defined for the rule \"maximum\".");
+
+            expect(callback).toThrow(error);
+        });
+    });
+
+    describe("in", () => {
+        it("should return null when no validation errors are found", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
+            const data          = {role: "ADMIN"};
+            const result        = validator.validate(data);
+            const expectation   = null
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when there is one", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
+            const data          = {role: "GUEST"};
+            const result        = validator.validate(data);
+            const expectation   = [`role should be one of the following: ADMIN, USER, SUPERUSER.`];
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should throw an error if the rule value is not defined", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({role: "in"});
+            const data = {role: "ADMIN"};
+            const callback = () => validator.validate(data);
+            const error = new Error("No value defined for the rule \"in\".");
 
             expect(callback).toThrow(error);
         });
