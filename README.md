@@ -161,3 +161,21 @@ const goodData  = {age: 99};
 validator.validate(badData);    // ["age should be at most equal to 99."]
 validator.validate(goodData);   // null
 ```
+
+#### In
+
+Check if the said attribute is includes inside a set of given values.
+
+```javascript
+const {Validator} = require("@aminnairi/validator");
+
+const validator = new Validator({
+    role: "in:ADMIN,USER,SUPERUSER"
+});
+
+const badData   = {role: "MODERATOR"};
+const goodData  = {role: "USER"};
+
+validator.validate(badData);    // ["role should be one of the following: ADMIN, USER, SUPERUSER."]
+validator.validate(goodData);   // null
+```
