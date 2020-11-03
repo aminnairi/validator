@@ -39,14 +39,6 @@ const data = {
 };
 
 const errors = validator.validate(data);
-
-if (null !== errors) {
-    console.error("Validation errors found.");
-    console.log(errors);
-    // [ "email should be a valid email.", "confirmation should be the same as password." ]
-} else {
-    console.log("No validation errors found.");
-}
 ```
 
 ## API
@@ -61,13 +53,15 @@ Check if the said attribute is present in the provided data.
 const {Validator} = require("@aminnairi/validator");
 
 const validator = new Validator({
-    username: "required"
+    username: "required",
+    age: "required",
+    status: "required"
 });
 
-const badData   = {};
-const goodData  = {username: "username"};
+const badData   = {age: undefined, status: null};
+const goodData  = {username: "username", age: 18, status: "ACTIVE"};
 
-validator.validate(badData);    // ["username is required."]
+validator.validate(badData);    // {username: ["username is required"], age: ["age is required."], status: ["status is required"]}
 validator.validate(goodData);   // null
 ```
 
@@ -85,7 +79,7 @@ const validator = new Validator({
 const badData   = {user: "user@domain"};
 const goodData  = {user: "user@domain.com"};
 
-validator.validate(badData);    // ["user should be a valid email."]
+validator.validate(badData);    // {email: ["user should be a valid email."]}
 validator.validate(goodData);   // null
 ```
 
@@ -103,7 +97,7 @@ const validator = new Validator({
 const badData   = {password: "abcABC123"};
 const goodData  = {password: "abcABC123!@#"};
 
-validator.validate(badData);    // ["password should contain at least digits, lower & upper letters, symbols and at least 8 characters."]
+validator.validate(badData);    // {password: ["password should contain at least digits, lower & upper letters, symbols and at least 8 characters."]}
 validator.validate(goodData);   // null
 ```
 
@@ -122,7 +116,7 @@ const validator = new Validator({
 const badData   = {password: "abcABC123!@#", confirmation: "abcABC123"};
 const goodData  = {password: "abcABC123!@#", confirmation: "abcABC123!@#"};
 
-validator.validate(badData);    // ["confirmation should be the same as password."]
+validator.validate(badData);    // {confirmation: ["confirmation should be the same as password."]}
 validator.validate(goodData);   // null
 ```
 
@@ -134,13 +128,14 @@ Check if the said attribute is at least equals to a given one.
 const {Validator} = require("@aminnairi/validator");
 
 const validator = new Validator({
-    age: "minimum:18"
+    age: "minimum:18",
+    name: "minimum:3"
 });
 
-const badData   = {age: 16};
-const goodData  = {age: 18};
+const badData   = {age: 16, name: "ab"};
+const goodData  = {age: 18, name: "John"};
 
-validator.validate(badData);    // ["age should be at least equal to 18."]
+validator.validate(badData);    // {age: ["age should be at least equal to 18."], name: ["name should have at least 3 characters."]}
 validator.validate(goodData);   // null
 ```
 
@@ -152,13 +147,14 @@ Check if the said attribute is at most equals to a given one.
 const {Validator} = require("@aminnairi/validator");
 
 const validator = new Validator({
-    age: "maximum:99"
+    age: "maximum:99",
+    name: "maximum:3"
 });
 
-const badData   = {age: 100};
-const goodData  = {age: 99};
+const badData   = {age: 100, name: "John"};
+const goodData  = {age: 99, name: "Joe"};
 
-validator.validate(badData);    // ["age should be at most equal to 99."]
+validator.validate(badData);    // {age: ["age should be at most equal to 99."], name: ["name should have at most 3 characters."]}
 validator.validate(goodData);   // null
 ```
 
@@ -176,6 +172,6 @@ const validator = new Validator({
 const badData   = {role: "MODERATOR"};
 const goodData  = {role: "USER"};
 
-validator.validate(badData);    // ["role should be one of the following: ADMIN, USER, SUPERUSER."]
+validator.validate(badData);    // {role: ["role should be one of the following: ADMIN, USER, SUPERUSER."]}
 validator.validate(goodData);   // null
 ```
