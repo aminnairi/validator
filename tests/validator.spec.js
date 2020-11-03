@@ -289,6 +289,30 @@ describe("validator.js", () => {
         });
     });
 
+    describe("date", () => {
+        it("should return null when no validation errors are found", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({birthday: "date"});
+            const data          = {birthday: new Date().toString()};
+            const result        = validator.validate(data);
+            const expectation   = null
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when there is one", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({birthday: "date"});
+            const data          = {birthday: "tomorrow"};
+            const result        = validator.validate(data);
+            const expectation   = {birthday: ["birthday should be a valid date."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+    });
+
     describe("unrecognized rule", () => {
         it("should throw if encountering an unrecognized rule", () => {
             expect.assertions(1);
