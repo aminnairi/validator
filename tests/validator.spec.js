@@ -265,6 +265,30 @@ describe("validator.js", () => {
         });
     });
 
+    describe("integer", () => {
+        it("should return null when no validation errors are found", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({status: "integer"});
+            const data          = {status: 12};
+            const result        = validator.validate(data);
+            const expectation   = null
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when there is one", () => {
+            expect.assertions(1);
+
+            const validator     = new Validator({status: "integer"});
+            const data          = {status: "GUEST"};
+            const result        = validator.validate(data);
+            const expectation   = {status: ["status should be an integer."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+    });
+
     describe("unrecognized rule", () => {
         it("should throw if encountering an unrecognized rule", () => {
             expect.assertions(1);
