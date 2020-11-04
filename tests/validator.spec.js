@@ -13,10 +13,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({username: "required"});
-            const data          = {username: "username"};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({username: "required"});
+            const data = {username: "username"};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -24,10 +24,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({username: "required"});
-            const data          = {};
-            const result        = validator.validate(data);
-            const expectation   = {username: ["username is required."]};
+            const validator = new Validator({username: "required"});
+            const data = {};
+            const result = validator.validate(data);
+            const expectation = {username: ["username is required."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -37,10 +37,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({email: "email"});
-            const data          = {email: "user@domain.com"};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({email: "email"});
+            const data = {email: "user@domain.com"};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -48,10 +48,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({email: "email"});
-            const data          = {email: "user@domain"};
-            const result        = validator.validate(data);
-            const expectation   = {email: ["email should be a valid email."]};
+            const validator = new Validator({email: "email"});
+            const data = {email: "user@domain"};
+            const result = validator.validate(data);
+            const expectation = {email: ["email should be a valid email."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -61,10 +61,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({password: "password"});
-            const data          = {password: "abcABC123!@#"};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({password: "password"});
+            const data = {password: "abcABC123!@#"};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -72,10 +72,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({password: "password"});
-            const data          = {password: "abcABC123"};
-            const result        = validator.validate(data);
-            const expectation   = {password: ["password should contain at least digits, lower & upper letters, symbols and at least 8 characters."]};
+            const validator = new Validator({password: "password"});
+            const data = {password: "abcABC123"};
+            const result = validator.validate(data);
+            const expectation = {password: ["password should contain at least digits, lower & upper letters, symbols and at least 8 characters."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -85,10 +85,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({password: "password", confirmation: "same:password"});
-            const data          = {password: "abcABC123!@#", confirmation: "abcABC123!@#"};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({confirmation: "same:password", password: "password"});
+            const data = {confirmation: "abcABC123!@#", password: "abcABC123!@#"};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -96,10 +96,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({password: "password", confirmation: "same:password"});
-            const data          = {password: "abcABC123!@#", confirmation: "confirmation"};
-            const result        = validator.validate(data);
-            const expectation   = {confirmation: ["confirmation should be the same as password."]};
+            const validator = new Validator({confirmation: "same:password", password: "password"});
+            const data = {confirmation: "confirmation", password: "abcABC123!@#"};
+            const result = validator.validate(data);
+            const expectation = {confirmation: ["confirmation should be the same as password."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -107,8 +107,8 @@ describe("validator.js", () => {
         it("should throw an error if the rule value is not defined", () => {
             expect.assertions(1);
 
-            const validator = new Validator({password: "password", confirmation: "same"});
-            const data = {password: "abcABC123!@#", confirmation: "abcABC123!@#"};
+            const validator = new Validator({confirmation: "same", password: "password"});
+            const data = {confirmation: "abcABC123!@#", password: "abcABC123!@#"};
             const callback = () => validator.validate(data);
             const error = new Error("No value defined for the rule \"same\".");
 
@@ -120,10 +120,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({age: "minimum:18"});
-            const data          = {age: 18};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({age: "minimum:18"});
+            const data = {age: 18};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -131,10 +131,10 @@ describe("validator.js", () => {
         it("should return a validation error when the value is a string", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({age: "minimum:18"});
-            const data          = {age: "age"};
-            const result        = validator.validate(data);
-            const expectation   = {age: ["age should have at least 18 characters."]};
+            const validator = new Validator({age: "minimum:18"});
+            const data = {age: "age"};
+            const result = validator.validate(data);
+            const expectation = {age: ["age should have at least 18 characters."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -142,10 +142,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({age: "minimum:18"});
-            const data          = {age: 16};
-            const result        = validator.validate(data);
-            const expectation   = {age: ["age should be at least equals to 18."]};
+            const validator = new Validator({age: "minimum:18"});
+            const data = {age: 16};
+            const result = validator.validate(data);
+            const expectation = {age: ["age should be at least equals to 18."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -177,10 +177,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({age: "maximum:99"});
-            const data          = {age: 99};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({age: "maximum:99"});
+            const data = {age: 99};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -188,10 +188,10 @@ describe("validator.js", () => {
         it("should return a validation error when the value is a string", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({age: "maximum:-10"});
-            const data          = {age: "age"};
-            const result        = validator.validate(data);
-            const expectation   = {age: ["age should have at most -10 characters."]};
+            const validator = new Validator({age: "maximum:-10"});
+            const data = {age: "age"};
+            const result = validator.validate(data);
+            const expectation = {age: ["age should have at most -10 characters."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -199,10 +199,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({age: "maximum:99"});
-            const data          = {age: 100};
-            const result        = validator.validate(data);
-            const expectation   = {age: ["age should be at most equals to 99."]};
+            const validator = new Validator({age: "maximum:99"});
+            const data = {age: 100};
+            const result = validator.validate(data);
+            const expectation = {age: ["age should be at most equals to 99."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -234,10 +234,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
-            const data          = {role: "ADMIN"};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
+            const data = {role: "ADMIN"};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -245,10 +245,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
-            const data          = {role: "GUEST"};
-            const result        = validator.validate(data);
-            const expectation   = {role: [`role should be one of the following: ADMIN, USER, SUPERUSER.`]};
+            const validator = new Validator({role: "in:ADMIN,USER,SUPERUSER"});
+            const data = {role: "GUEST"};
+            const result = validator.validate(data);
+            const expectation = {role: [`role should be one of the following: ADMIN, USER, SUPERUSER.`]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -269,10 +269,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({status: "integer"});
-            const data          = {status: 12};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({status: "integer"});
+            const data = {status: 12};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -280,10 +280,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({status: "integer"});
-            const data          = {status: "GUEST"};
-            const result        = validator.validate(data);
-            const expectation   = {status: ["status should be an integer."]};
+            const validator = new Validator({status: "integer"});
+            const data = {status: "GUEST"};
+            const result = validator.validate(data);
+            const expectation = {status: ["status should be an integer."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -293,10 +293,10 @@ describe("validator.js", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({birthday: "date"});
-            const data          = {birthday: new Date().toString()};
-            const result        = validator.validate(data);
-            const expectation   = null
+            const validator = new Validator({birthday: "date"});
+            const data = {birthday: new Date().toString()};
+            const result = validator.validate(data);
+            const expectation = null;
 
             expect(result).toStrictEqual(expectation);
         });
@@ -304,10 +304,10 @@ describe("validator.js", () => {
         it("should return a validation error when there is one", () => {
             expect.assertions(1);
 
-            const validator     = new Validator({birthday: "date"});
-            const data          = {birthday: "tomorrow"};
-            const result        = validator.validate(data);
-            const expectation   = {birthday: ["birthday should be a valid date."]};
+            const validator = new Validator({birthday: "date"});
+            const data = {birthday: "tomorrow"};
+            const result = validator.validate(data);
+            const expectation = {birthday: ["birthday should be a valid date."]};
 
             expect(result).toStrictEqual(expectation);
         });

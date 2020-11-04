@@ -1,3 +1,4 @@
+"use strict";
 /*
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/en/configuration.html
@@ -137,7 +138,7 @@ module.exports = {
     // snapshotSerializers: [],
 
     // The test environment that will be used for testing
-    testEnvironment: "node",
+    testEnvironment: "node"
 
     // Options that will be passed to the testEnvironment
     // testEnvironmentOptions: {},
