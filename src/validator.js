@@ -147,6 +147,29 @@ exports.Validator = class Validator {
                     return currentErrors;
                 }
 
+                if (currentRule.startsWith("different")) {
+                    const [, maybeDifferent] = currentRule.split(":");
+
+                    if ("undefined" === typeof maybeDifferent) {
+                        throw new Error("No value defined for the rule \"different\".");
+                    }
+
+                    const different = maybeDifferent;
+                    const differentValue = data[different];
+
+                    if ("undefined" !== typeof value && null !== value && differentValue === value) {
+                        return {
+                            ...currentErrors,
+                            [property]: [
+                                ...currentErrors[property] || [],
+                                `${property} should be different than ${different}.`
+                            ]
+                        };
+                    }
+
+                    return currentErrors;
+                }
+
                 if (currentRule.startsWith("minimum")) {
                     const [, maybeMinimum] = currentRule.split(":");
 
