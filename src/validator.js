@@ -110,6 +110,20 @@ exports.Validator = class Validator {
                     return currentErrors;
                 }
 
+                if ("string" === currentRule) {
+                    if ("string" !== typeof value) {
+                        return {
+                            ...currentErrors,
+                            [property]: [
+                                ...currentErrors[property] || [],
+                                `${property} should be a string.`
+                            ]
+                        };
+                    }
+
+                    return errors;
+                }
+
                 if (currentRule.startsWith("same")) {
                     const [, maybeSame] = currentRule.split(":");
 
