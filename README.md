@@ -24,24 +24,73 @@ $ npm uninstall @aminnairi/validator
 ## Usage
 
 ```javascript
+"use strict";
+
 const {Validator} = require("@aminnairi/validator");
 
 const validator = new Validator({
-    email: "required|email",
-    password: "required|password",
-    confirmation: "required|same:password"
+    confirmation: "required|string|same:password",
+    email: "required|string|email",
+    password: "required|string|password"
 });
 
 const data = {
-    email: "email@adress",
-    password: "abcABC123!@#",
-    confirmation: "abcABC!@#123'
+    confirmation: "abcABC123!@#",
+    email: "email@address.com",
+    password: "abcABC123!@#"
 };
 
 const errors = validator.validate(data);
 ```
 
 ## API
+
+### Methods
+
+#### Constructor
+
+##### Prototype
+
+```javascript
+new(rules: Record<string, string>): Validator;
+```
+
+##### Example
+
+```javascript
+const validator = new Validator({
+    confirmation: "required|string|same:password",
+    email: "required|string|email",
+    password: "required|string|password"
+});
+```
+
+#### Validate
+
+##### Prototype
+
+```javascript
+validate(data: Record<string, any>): Record<string, Array<string>> | null;
+```
+
+##### Example
+
+```javascript
+const noErrors = validator.validate({
+    confirmation: "abcABC123!@#",
+    email: "email@domain.com",
+    password: "abcABC123!@#"
+});
+
+console.log(noErrors); // null
+
+const errors = validator.validate({
+    email: "email@domain",
+    password: "abcABC123!@#"
+});
+
+console.log(errors); // {email: ["email should be a valid email."], confirmation: ["confirmation should be the same as password."]}
+```
 
 ### Rules
 
@@ -50,8 +99,6 @@ const errors = validator.validate(data);
 Check if the said attribute is present in the provided data.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     username: "required",
     age: "required",
@@ -70,8 +117,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is a valid email.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     user: "email"
 });
@@ -88,8 +133,6 @@ validator.validate(goodData);   // null
 Check if the said attribute contains at least one digit, one lower case letter, one upper case letter, one symbol and is at least eight characters long.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     password: "password"
 });
@@ -106,8 +149,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is the same as another one.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     password: "required|password",
     confirmation: "same:password"
@@ -125,8 +166,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is at least equals to a given one.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     age: "minimum:18",
     name: "minimum:3"
@@ -144,8 +183,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is at most equals to a given one.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     age: "maximum:99",
     name: "maximum:3"
@@ -163,8 +200,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is includes inside a set of given values.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     role: "in:ADMIN,USER,SUPERUSER"
 });
@@ -181,8 +216,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is an integer.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     status: "integer"
 });
@@ -199,8 +232,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is a date.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     birthday: "date"
 });
@@ -217,8 +248,6 @@ validator.validate(goodData);   // null
 Check if the said attribute is a string.
 
 ```javascript
-const {Validator} = require("@aminnairi/validator");
-
 const validator = new Validator({
     name: "string"
 });
