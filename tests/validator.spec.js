@@ -116,6 +116,41 @@ describe("validator.js", () => {
         });
     });
 
+    describe("different", () => {
+        it("should return null when no validation errors are found", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({password: "different:username", username: "required"});
+            const data = {password: "abcABC123!@#", username: "johndoe"};
+            const result = validator.validate(data);
+            const expectation = null;
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when there is one", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({password: "different:username", username: "required"});
+            const data = {password: "johndoe", username: "johndoe"};
+            const result = validator.validate(data);
+            const expectation = {password: ["password should be different than username."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should throw an error if the rule value is not defined", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({password: "different", username: "required"});
+            const data = {password: "johndoe", username: "johndoe"};
+            const callback = () => validator.validate(data);
+            const error = new Error("No value defined for the rule \"different\".");
+
+            expect(callback).toThrow(error);
+        });
+    });
+
     describe("minimum", () => {
         it("should return null when no validation errors are found", () => {
             expect.assertions(1);
