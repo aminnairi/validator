@@ -1,0 +1,24 @@
+name: Code Style
+
+on: ["pull_request", "push"]
+
+jobs:
+    codestyle:
+        name: Check that the code style remains consistent
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout the project
+              uses: actions/checkout@v2
+
+            - name: Start the Docker Compose services
+              run: make start
+
+            - name: Install the dependencies
+              run: make install
+
+            - name: Check that the code is up to the specifications
+              run: make lint
+
+            - name: Stop the Docker Compose services
+              run: make stop
