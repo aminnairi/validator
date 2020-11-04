@@ -1,4 +1,4 @@
-.PHONY: start stop restart build install
+.PHONY: start stop restart build install lint
 
 DOCKER_COMPOSE_EXEC_OPTIONS=
 
@@ -22,3 +22,6 @@ install:
 
 test:
 	docker-compose exec $(DOCKER_COMPOSE_EXEC_OPTIONS) node npm run test
+
+lint:
+	docker-compose exec $(DOCKER_COMPOSE_EXEC_OPTIONS) node npm run lint
