@@ -211,3 +211,21 @@ const goodData  = {birthday: new Date().toString()};
 validator.validate(badData);    // {birthday: ["birthday should be a valid date."]}
 validator.validate(goodData);   // null
 ```
+
+#### String
+
+Check if the said attribute is a string.
+
+```javascript
+const {Validator} = require("@aminnairi/validator");
+
+const validator = new Validator({
+    name: "string"
+});
+
+const badData   = {name: 42};
+const goodData  = {name: "John DOE"};
+
+validator.validate(badData);    // {name: ["name should be a string."]}
+validator.validate(goodData);   // null
+```
