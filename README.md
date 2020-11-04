@@ -161,6 +161,21 @@ validator.validate(badData);    // {confirmation: ["confirmation should be the s
 validator.validate(goodData);   // null
 ```
 
+#### Different
+
+```javascript
+const validator = new Validator({
+    password: "different:username",
+    username: "required"
+});
+
+const badData   = {password: "johndoe", username: "johndoe"};
+const goodData  = {password: "abcABC123!@#", username: "johndoe"};
+
+validator.validate(badData);    // {password: ["password should be different than username."]}
+validator.validate(goodData);   // null
+```
+
 #### Minimum
 
 Check if the said attribute is at least equals to a given one.
