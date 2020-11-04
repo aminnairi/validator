@@ -313,6 +313,30 @@ describe("validator.js", () => {
         });
     });
 
+    describe("string", () => {
+        it("should return null when no validation errors are found", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({name: "string"});
+            const data = {name: "name"};
+            const result = validator.validate(data);
+            const expectation = null;
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when there is one", () => {
+            expect.assertions(1);
+
+            const validator = new Validator({name: "string"});
+            const data = {name: 42};
+            const result = validator.validate(data);
+            const expectation = {name: ["name should be a string."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+    });
+
     describe("unrecognized rule", () => {
         it("should throw if encountering an unrecognized rule", () => {
             expect.assertions(1);
