@@ -31,6 +31,12 @@ $ make install
 $ make test
 ```
 
+## Lint
+
+```console
+$ make lint
+```
+
 ## Build
 
 ```console
