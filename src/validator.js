@@ -6,6 +6,7 @@
 exports.Validator = class Validator {
     /**
      * @param {Record<string, string>} rules
+     * @param {Record<string, string>} translations
      *
      * @example
      * const validator = new Validator({
@@ -14,8 +15,9 @@ exports.Validator = class Validator {
      *      confirmation: "required|same:password"
      * });
      */
-    constructor(rules) {
+    constructor(rules = {}, translations = {}) {
         this.rules = rules;
+        this.translations = translations;
     }
 
     /**
@@ -37,11 +39,19 @@ exports.Validator = class Validator {
             const additionalErrors = rules.reduce((currentErrors, currentRule) => {
                 if ("required" === currentRule) {
                     if ("undefined" === typeof value || null === value) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
+                            error = `${property} is required.`;
+                        } else {
+                            error = this.translations[property][currentRule].replace("{}", property);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} is required.`
+                                error
                             ]
                         };
                     }
@@ -51,11 +61,19 @@ exports.Validator = class Validator {
 
                 if ("integer" === currentRule) {
                     if ("undefined" !== typeof value && null !== value && !Number.isInteger(Number(value))) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
+                            error = `${property} should be an integer.`;
+                        } else {
+                            error = this.translations[property][currentRule].replace("{}", property);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be an integer.`
+                                error
                             ]
                         };
                     }
@@ -68,11 +86,19 @@ exports.Validator = class Validator {
                     const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/u;
 
                     if ("string" === typeof value && !pattern.test(value)) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
+                            error = `${property} should be a valid email.`;
+                        } else {
+                            error = this.translations[property][currentRule].replace("{}", property);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be a valid email.`
+                                error
                             ]
                         };
                     }
@@ -84,11 +110,19 @@ exports.Validator = class Validator {
                     const pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/u;
 
                     if ("string" === typeof value && !pattern.test(value)) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
+                            error = `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`;
+                        } else {
+                            error = this.translations[property][currentRule].replace("{}", property);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`
+                                error
                             ]
                         };
                     }
@@ -98,11 +132,19 @@ exports.Validator = class Validator {
 
                 if ("date" === currentRule) {
                     if ("undefined" !== typeof value && null !== value && Number.isNaN(Date.parse(value))) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
+                            error = `${property} should be a valid date.`;
+                        } else {
+                            error = this.translations[property][currentRule].replace("{}", property);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be a valid date.`
+                                error
                             ]
                         };
                     }
@@ -112,11 +154,19 @@ exports.Validator = class Validator {
 
                 if ("string" === currentRule) {
                     if ("string" !== typeof value) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
+                            error = `${property} should be a string.`;
+                        } else {
+                            error = this.translations[property][currentRule].replace("{}", property);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be a string.`
+                                error
                             ]
                         };
                     }
@@ -125,7 +175,7 @@ exports.Validator = class Validator {
                 }
 
                 if (currentRule.startsWith("same")) {
-                    const [, maybeSame] = currentRule.split(":");
+                    const [currentRuleName, maybeSame] = currentRule.split(":");
 
                     if ("undefined" === typeof maybeSame) {
                         throw new Error("No value defined for the rule \"same\".");
@@ -135,11 +185,19 @@ exports.Validator = class Validator {
                     const sameValue = data[same];
 
                     if ("undefined" !== typeof value && null !== value && sameValue !== value) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
+                            error = `${property} should be the same as ${same}.`;
+                        } else {
+                            error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", same);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be the same as ${same}.`
+                                error
                             ]
                         };
                     }
@@ -148,7 +206,7 @@ exports.Validator = class Validator {
                 }
 
                 if (currentRule.startsWith("different")) {
-                    const [, maybeDifferent] = currentRule.split(":");
+                    const [currentRuleName, maybeDifferent] = currentRule.split(":");
 
                     if ("undefined" === typeof maybeDifferent) {
                         throw new Error("No value defined for the rule \"different\".");
@@ -158,11 +216,19 @@ exports.Validator = class Validator {
                     const differentValue = data[different];
 
                     if ("undefined" !== typeof value && null !== value && differentValue === value) {
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
+                            error = `${property} should be different than ${different}.`;
+                        } else {
+                            error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", different);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be different than ${different}.`
+                                error
                             ]
                         };
                     }
@@ -171,7 +237,7 @@ exports.Validator = class Validator {
                 }
 
                 if (currentRule.startsWith("minimum")) {
-                    const [, maybeMinimum] = currentRule.split(":");
+                    const [currentRuleName, maybeMinimum] = currentRule.split(":");
 
                     if ("undefined" === typeof maybeMinimum) {
                         throw new Error("No value defined for the rule \"minimum\".");
@@ -188,21 +254,37 @@ exports.Validator = class Validator {
 
                     if ("undefined" !== typeofValue && null !== value) {
                         if ("number" === typeof value && value < minimum) {
+                            let error = null;
+
+                            if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
+                                error = `${property} should be at least equals to ${minimum}.`;
+                            } else {
+                                error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", minimum);
+                            }
+
                             return {
                                 ...currentErrors,
                                 [property]: [
                                     ...currentErrors[property] || [],
-                                    `${property} should be at least equals to ${minimum}.`
+                                    error
                                 ]
                             };
                         }
 
                         if ("string" === typeofValue && value.length < minimum) {
+                            let error = null;
+
+                            if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
+                                error = `${property} should have at least ${minimum} characters.`;
+                            } else {
+                                error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", minimum);
+                            }
+
                             return {
                                 ...currentErrors,
                                 [property]: [
                                     ...currentErrors[property] || [],
-                                    `${property} should have at least ${minimum} characters.`
+                                    error
                                 ]
                             };
                         }
@@ -212,7 +294,7 @@ exports.Validator = class Validator {
                 }
 
                 if (currentRule.startsWith("maximum")) {
-                    const [, maybeMaximum] = currentRule.split(":");
+                    const [currentRuleName, maybeMaximum] = currentRule.split(":");
 
                     if ("undefined" === typeof maybeMaximum) {
                         throw new Error("No value defined for the rule \"maximum\".");
@@ -229,11 +311,19 @@ exports.Validator = class Validator {
 
                     if ("undefined" !== typeofValue && null !== value) {
                         if ("number" === typeofValue && value > maximum) {
+                            let error = null;
+
+                            if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
+                                error = `${property} should be at most equals to ${maximum}.`;
+                            } else {
+                                error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", maximum);
+                            }
+
                             return {
                                 ...currentErrors,
                                 [property]: [
                                     ...currentErrors[property] || [],
-                                    `${property} should be at most equals to ${maximum}.`
+                                    error
                                 ]
                             };
                         }
@@ -254,7 +344,7 @@ exports.Validator = class Validator {
 
 
                 if (currentRule.startsWith("in")) {
-                    const [, maybeIn] = currentRule.split(":");
+                    const [currentRuleName, maybeIn] = currentRule.split(":");
 
                     if ("undefined" === typeof maybeIn) {
                         throw new Error(`No value defined for the rule "in".`);
@@ -263,11 +353,21 @@ exports.Validator = class Validator {
                     const inValues = maybeIn.split(",").map(currentValue => currentValue.trim());
 
                     if ("undefined" !== typeof value && null !== value && !inValues.includes(value)) {
+                        const inValuesText = inValues.join(", ");
+
+                        let error = null;
+
+                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
+                            error = `${property} should be one of the following: ${inValuesText}.`;
+                        } else {
+                            error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", inValuesText);
+                        }
+
                         return {
                             ...currentErrors,
                             [property]: [
                                 ...currentErrors[property] || [],
-                                `${property} should be one of the following: ${inValues.join(", ")}.`
+                                error
                             ]
                         };
                     }
