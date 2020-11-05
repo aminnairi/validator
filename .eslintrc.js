@@ -17,6 +17,16 @@ module.exports = {
             parserOptions: {
                 sourceType: "module"
             }
+        },
+        {
+            env: {
+                commonjs: false
+            },
+            extends: ["@aminnairi", "plugin:jest/all"],
+            files: ["tests/*"],
+            plugins: [
+                "jest"
+            ]
         }
     ],
     parserOptions: {
