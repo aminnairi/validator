@@ -49,7 +49,7 @@ const errors = validator.validate(data);
 
 ### Translation
 
-```console
+```javascript
 "use strict";
 
 const {Validator} = require("./src/validator.js");
