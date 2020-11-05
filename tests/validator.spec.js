@@ -31,6 +31,19 @@ describe("validator.js", () => {
 
             expect(result).toStrictEqual(expectation);
         });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {username: "required"};
+            const translations = {username: {required: "Le nom d'utilisateur est obligatoire."}};
+            const validator = new Validator(rules, translations);
+            const data = {};
+            const result = validator.validate(data);
+            const expectation = {username: ["Le nom d'utilisateur est obligatoire."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
     });
 
     describe("email", () => {
@@ -52,6 +65,19 @@ describe("validator.js", () => {
             const data = {email: "user@domain"};
             const result = validator.validate(data);
             const expectation = {email: ["email should be a valid email."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {email: "email"};
+            const translations = {email: {email: "L'adresse email est obligatoire."}};
+            const validator = new Validator(rules, translations);
+            const data = {email: "user@domain"};
+            const result = validator.validate(data);
+            const expectation = {email: ["L'adresse email est obligatoire."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -79,6 +105,19 @@ describe("validator.js", () => {
 
             expect(result).toStrictEqual(expectation);
         });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {password: "password"};
+            const translations = {password: {password: "Le mot de passe doit comporter au moins une lettre majuscule, une lettre minuscule, un chiffre, un symbole et 8 caractères."}};
+            const validator = new Validator(rules, translations);
+            const data = {password: "abcABC123"};
+            const result = validator.validate(data);
+            const expectation = {password: ["Le mot de passe doit comporter au moins une lettre majuscule, une lettre minuscule, un chiffre, un symbole et 8 caractères."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
     });
 
     describe("same", () => {
@@ -100,6 +139,19 @@ describe("validator.js", () => {
             const data = {confirmation: "confirmation", password: "abcABC123!@#"};
             const result = validator.validate(data);
             const expectation = {confirmation: ["confirmation should be the same as password."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {confirmation: "same:password", password: "password"};
+            const translations = {confirmation: {same: "Les mots de passe ne correspondent pas."}};
+            const validator = new Validator(rules, translations);
+            const data = {confirmation: "confirmation", password: "abcABC123!@#"};
+            const result = validator.validate(data);
+            const expectation = {confirmation: ["Les mots de passe ne correspondent pas."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -139,6 +191,19 @@ describe("validator.js", () => {
             expect(result).toStrictEqual(expectation);
         });
 
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {password: "different:username", username: "required"};
+            const translations = {password: {different: "Le mot de passe doit être différent du nom d'utilisateur."}};
+            const validator = new Validator(rules, translations);
+            const data = {password: "johndoe", username: "johndoe"};
+            const result = validator.validate(data);
+            const expectation = {password: ["Le mot de passe doit être différent du nom d'utilisateur."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
         it("should throw an error if the rule value is not defined", () => {
             expect.assertions(1);
 
@@ -174,13 +239,40 @@ describe("validator.js", () => {
             expect(result).toStrictEqual(expectation);
         });
 
-        it("should return a validation error when there is one", () => {
+        it("should return a translated validation error when the value is a string", () => {
             expect.assertions(1);
 
-            const validator = new Validator({age: "minimum:18"});
+            const rules = {age: "minimum:18"};
+            const translations = {age: {minimum: "L'âge doit faire au minimum 18 caractères."}};
+            const validator = new Validator(rules, translations);
+            const data = {age: "age"};
+            const result = validator.validate(data);
+            const expectation = {age: ["L'âge doit faire au minimum 18 caractères."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a validation error when the value is an integer", () => {
+            expect.assertions(1);
+
+            const rules = {age: "minimum:18"};
+            const validator = new Validator(rules);
             const data = {age: 16};
             const result = validator.validate(data);
             const expectation = {age: ["age should be at least equals to 18."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a translated validation error when the value is an integer", () => {
+            expect.assertions(1);
+
+            const rules = {age: "minimum:18"};
+            const translations = {age: {minimum: "L'âge doit être d'au moins 18."}};
+            const validator = new Validator(rules, translations);
+            const data = {age: 16};
+            const result = validator.validate(data);
+            const expectation = {age: ["L'âge doit être d'au moins 18."]};
 
             expect(result).toStrictEqual(expectation);
         });
@@ -242,6 +334,19 @@ describe("validator.js", () => {
             expect(result).toStrictEqual(expectation);
         });
 
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {age: "maximum:99"};
+            const translations = {age: {maximum: "L'âge doit être au maximum de 99."}};
+            const validator = new Validator(rules, translations);
+            const data = {age: 100};
+            const result = validator.validate(data);
+            const expectation = {age: ["L'âge doit être au maximum de 99."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
         it("should throw an error if the rule value is not defined", () => {
             expect.assertions(1);
 
@@ -288,6 +393,19 @@ describe("validator.js", () => {
             expect(result).toStrictEqual(expectation);
         });
 
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {role: "in:ADMIN,USER,SUPERUSER"};
+            const translations = {role: {in: "Le rôle doit être soit ADMIN, USER ou SUPERUSER."}};
+            const validator = new Validator(rules, translations);
+            const data = {role: "GUEST"};
+            const result = validator.validate(data);
+            const expectation = {role: ["Le rôle doit être soit ADMIN, USER ou SUPERUSER."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
         it("should throw an error if the rule value is not defined", () => {
             expect.assertions(1);
 
@@ -322,6 +440,19 @@ describe("validator.js", () => {
 
             expect(result).toStrictEqual(expectation);
         });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {status: "integer"};
+            const translations = {status: {integer: "Le status doit être un entier."}};
+            const validator = new Validator(rules, translations);
+            const data = {status: "GUEST"};
+            const result = validator.validate(data);
+            const expectation = {status: ["Le status doit être un entier."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
     });
 
     describe("date", () => {
@@ -346,6 +477,19 @@ describe("validator.js", () => {
 
             expect(result).toStrictEqual(expectation);
         });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {birthday: "date"};
+            const translations = {birthday: {date: "La date de naissance doit être au format date."}};
+            const validator = new Validator(rules, translations);
+            const data = {birthday: "tomorrow"};
+            const result = validator.validate(data);
+            const expectation = {birthday: ["La date de naissance doit être au format date."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
     });
 
     describe("string", () => {
@@ -367,6 +511,19 @@ describe("validator.js", () => {
             const data = {name: 42};
             const result = validator.validate(data);
             const expectation = {name: ["name should be a string."]};
+
+            expect(result).toStrictEqual(expectation);
+        });
+
+        it("should return a translated validation error when there is one", () => {
+            expect.assertions(1);
+
+            const rules = {name: "string"};
+            const translations = {name: {string: "Le nom doit être une chaîne de caractères."}};
+            const validator = new Validator(rules, translations);
+            const data = {name: 42};
+            const result = validator.validate(data);
+            const expectation = {name: ["Le nom doit être une chaîne de caractères."]};
 
             expect(result).toStrictEqual(expectation);
         });
