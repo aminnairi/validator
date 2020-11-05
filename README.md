@@ -21,18 +21,22 @@ $ npm install aminnairi/validator
 $ npm uninstall @aminnairi/validator
 ```
 
-## Usage
+## Example
+
+### Validation
 
 ```javascript
 "use strict";
 
 const {Validator} = require("@aminnairi/validator");
 
-const validator = new Validator({
+const rules = {
     confirmation: "required|string|same:password",
     email: "required|string|email",
     password: "required|string|password"
-});
+};
+
+const validator = new Validator(rules);
 
 const data = {
     confirmation: "abcABC123!@#",
@@ -41,6 +45,44 @@ const data = {
 };
 
 const errors = validator.validate(data);
+```
+
+### Translation
+
+```console
+"use strict";
+
+const {Validator} = require("./src/validator.js");
+
+const rules = {
+    confirmation: "required|string|same:password",
+    email: "required|string|email",
+    password: "required|string|password"
+};
+
+const translations = {
+    confirmation: {
+        required: "Le mot de passe de confirmation est obligatoire.",
+        same: "Les mots de passes ne correspondent pas.",
+        string: "Le mot de passe de confirmation doit être au format texte."
+    },
+
+    email: {
+        email: "L'adresse email doit avoir un format valide.",
+        required: "L'adresse email est obligatoire.",
+        string: "L'adresse email doit être au format texte."
+    },
+
+    password: {
+        password: "Le mot de passe doit comporter au moins une lettre (majuscule, minuscule), un chiffre, un symbole et 8 caractères.",
+        required: "Le mot de passe est obligatoire.",
+        string: "Le mot de passe doit être au format texte."
+    }
+};
+
+const data = {email: "email@domain"};
+
+const errors = new Validator(rules, translations).validate(data);
 ```
 
 ## API
