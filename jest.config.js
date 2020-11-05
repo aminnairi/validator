@@ -4,12 +4,14 @@
  * https://jestjs.io/docs/en/configuration.html
  */
 
+const path = require("path");
+
 module.exports = {
     // All imported modules in your tests should be mocked automatically
-    // automock: false,
+    automock: false,
 
     // Stop running tests after `n` failures
-    // bail: 0,
+    bail: 1,
 
     // The directory where Jest should store its cached dependency information
     cacheDirectory: ".jest",
@@ -35,21 +37,25 @@ module.exports = {
     coverageProvider: "v8",
 
     // A list of reporter names that Jest uses when writing coverage reports
-    // coverageReporters: [
-    //   "json",
-    //   "text",
-    //   "lcov",
-    //   "clover"
-    // ],
+    coverageReporters: [
+        "text"
+    ],
 
     // An object that configures minimum threshold enforcement for coverage results
-    // coverageThreshold: undefined,
+    coverageThreshold: {
+        global: {
+            branches: 100,
+            functions: 100,
+            lines: 100,
+            statements: 100
+        }
+    },
 
     // A path to a custom dependency extractor
     // dependencyExtractor: undefined,
 
     // Make calling deprecated APIs throw helpful error messages
-    // errorOnDeprecated: false,
+    errorOnDeprecated: true,
 
     // Force coverage collection from ignored files using an array of glob patterns
     // forceCoverageMatch: [],
@@ -64,22 +70,17 @@ module.exports = {
     // globals: {},
 
     // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
-    // maxWorkers: "50%",
+    maxWorkers: "100%",
 
     // An array of directory names to be searched recursively up from the requiring module's location
-    // moduleDirectories: [
-    //   "node_modules"
-    // ],
+    moduleDirectories: [
+        "node_modules"
+    ],
 
     // An array of file extensions your modules use
-    // moduleFileExtensions: [
-    //   "js",
-    //   "json",
-    //   "jsx",
-    //   "ts",
-    //   "tsx",
-    //   "node"
-    // ],
+    moduleFileExtensions: [
+        "js"
+    ],
 
     // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
     // moduleNameMapper: {},
@@ -88,7 +89,7 @@ module.exports = {
     // modulePathIgnorePatterns: [],
 
     // Activates notifications for test results
-    // notify: false,
+    notify: false,
 
     // An enum that specifies notification mode. Requires { notify: true }
     // notifyMode: "failure-change",
@@ -115,7 +116,7 @@ module.exports = {
     // restoreMocks: false,
 
     // The root directory that Jest should scan for tests and modules within
-    // rootDir: undefined,
+    rootDir: path.resolve(""),
 
     // A list of paths to directories that Jest should use to search for files in
     roots: [
@@ -123,7 +124,7 @@ module.exports = {
     ],
 
     // Allows you to use a custom runner instead of Jest's default test runner
-    // runner: "jest-runner",
+    runner: "jest-runner",
 
     // The paths to modules that run some code to configure or set up the testing environment before each test
     // setupFiles: [],
@@ -132,13 +133,13 @@ module.exports = {
     // setupFilesAfterEnv: [],
 
     // The number of seconds after which a test is considered as slow and reported as such in the results.
-    // slowTestThreshold: 5,
+    slowTestThreshold: 5,
 
     // A list of paths to snapshot serializer modules Jest should use for snapshot testing
     // snapshotSerializers: [],
 
     // The test environment that will be used for testing
-    testEnvironment: "node"
+    testEnvironment: "node",
 
     // Options that will be passed to the testEnvironment
     // testEnvironmentOptions: {},
@@ -185,7 +186,7 @@ module.exports = {
     // unmockedModulePathPatterns: undefined,
 
     // Indicates whether each individual test should be reported during the run
-    // verbose: undefined,
+    verbose: true
 
     // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
     // watchPathIgnorePatterns: [],
