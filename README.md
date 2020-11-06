@@ -4,7 +4,7 @@
 
 JavaScript library to validate an object of values based on a set of given rules.
 
-*:warning: This library is still in its early stage. Usage is permitted but without any guarantees the API will not change in a near future. :warning:*
+*:warning: This library is still in its early stage. Usage is permitted but without any guarantees the API will not change in a near future.*
 
 ## Requirements
 
