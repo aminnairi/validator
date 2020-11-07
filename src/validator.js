@@ -20,7 +20,6 @@ exports.Validator = class Validator {
      * Instanciate a new validator.
      *
      * @param {Record<string, string>} rules
-     * @param {Record<string, string>} translations
      *
      * @return {Validator}
      *
