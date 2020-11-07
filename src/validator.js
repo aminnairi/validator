@@ -1,5 +1,17 @@
 "use strict";
 
+const {DateRule} = require("./rules/DateRule.js");
+const {DifferentRule} = require("./rules/DifferentRule.js");
+const {EmailRule} = require("./rules/EmailRule.js");
+const {InRule} = require("./rules/InRule.js");
+const {IntegerRule} = require("./rules/IntegerRule.js");
+const {MaximumRule} = require("./rules/MaximumRule.js");
+const {MinimumRule} = require("./rules/MinimumRule.js");
+const {PasswordRule} = require("./rules/PasswordRule.js");
+const {RequiredRule} = require("./rules/RequiredRule.js");
+const {SameRule} = require("./rules/SameRule.js");
+const {StringRule} = require("./rules/StringRule.js");
+
 /**
  * Rules for validating an object of values.
  */
@@ -15,8 +27,12 @@ exports.Validator = class Validator {
      *      confirmation: "required|same:password"
      * });
      */
-    constructor(rules = {}, translations = {}) {
+    constructor(rules) {
         this.rules = rules;
+        this.translations = {};
+    }
+
+    setTranslations(translations) {
         this.translations = translations;
     }
 
@@ -31,351 +47,145 @@ exports.Validator = class Validator {
      *      password: "abcABC123"
      * });
      */
-    validate(data) {
-        const validationErrors = Object.entries(this.rules).reduce((errors, [property, rule]) => {
+    validate(attributes) {
+        const {translations} = this;
+
+        const validationErrors = Object.entries(this.rules).reduce((errors, [attributeName, rule]) => {
             const rules = rule.split("|").map(currentRule => currentRule.trim());
-            const value = data[property];
 
             const additionalErrors = rules.reduce((currentErrors, currentRule) => {
-                if ("required" === currentRule) {
-                    if ("undefined" === typeof value || null === value) {
-                        let error = null;
+                const requiredRule = new RequiredRule({attributeName, attributes, translations});
 
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
-                            error = `${property} is required.`;
-                        } else {
-                            error = this.translations[property][currentRule].replace("{}", property);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (requiredRule.match(currentRule) && requiredRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            requiredRule.getError()
+                        ]
+                    };
                 }
 
-                if ("integer" === currentRule) {
-                    if ("undefined" !== typeof value && null !== value && !Number.isInteger(Number(value))) {
-                        let error = null;
+                const integerRule = new IntegerRule({attributeName, attributes, translations});
 
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
-                            error = `${property} should be an integer.`;
-                        } else {
-                            error = this.translations[property][currentRule].replace("{}", property);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (integerRule.match(currentRule) && integerRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            integerRule.getError()
+                        ]
+                    };
                 }
 
-                if ("email" === currentRule) {
-                    /* eslint-disable-next-line */
-                    const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/u;
+                const emailRule = new EmailRule({attributeName, attributes, translations});
 
-                    if ("string" === typeof value && !pattern.test(value)) {
-                        let error = null;
-
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
-                            error = `${property} should be a valid email.`;
-                        } else {
-                            error = this.translations[property][currentRule].replace("{}", property);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (emailRule.match(currentRule) && emailRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            emailRule.getError()
+                        ]
+                    };
                 }
 
-                if ("password" === currentRule) {
-                    const pattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/u;
+                const passwordRule = new PasswordRule({attributeName, attributes, translations});
 
-                    if ("string" === typeof value && !pattern.test(value)) {
-                        let error = null;
-
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
-                            error = `${property} should contain at least digits, lower & upper letters, symbols and at least 8 characters.`;
-                        } else {
-                            error = this.translations[property][currentRule].replace("{}", property);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (passwordRule.match(currentRule) && passwordRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            passwordRule.getError()
+                        ]
+                    };
                 }
 
-                if ("date" === currentRule) {
-                    if ("undefined" !== typeof value && null !== value && Number.isNaN(Date.parse(value))) {
-                        let error = null;
+                const dateRule = new DateRule({attributeName, attributes, translations});
 
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
-                            error = `${property} should be a valid date.`;
-                        } else {
-                            error = this.translations[property][currentRule].replace("{}", property);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (dateRule.match(currentRule) && dateRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            dateRule.getError()
+                        ]
+                    };
                 }
 
-                if ("string" === currentRule) {
-                    if ("string" !== typeof value) {
-                        let error = null;
+                const stringRule = new StringRule({attributeName, attributes, translations});
 
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRule]) {
-                            error = `${property} should be a string.`;
-                        } else {
-                            error = this.translations[property][currentRule].replace("{}", property);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return errors;
+                if (stringRule.match(currentRule) && stringRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            stringRule.getError()
+                        ]
+                    };
                 }
 
-                if (currentRule.startsWith("same")) {
-                    const [currentRuleName, maybeSame] = currentRule.split(":");
+                const sameRule = new SameRule({attributeName, attributes, translations});
 
-                    if ("undefined" === typeof maybeSame) {
-                        throw new Error("No value defined for the rule \"same\".");
-                    }
-
-                    const same = maybeSame;
-                    const sameValue = data[same];
-
-                    if ("undefined" !== typeof value && null !== value && sameValue !== value) {
-                        let error = null;
-
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
-                            error = `${property} should be the same as ${same}.`;
-                        } else {
-                            error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", same);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (sameRule.match(currentRule) && sameRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            sameRule.getError()
+                        ]
+                    };
                 }
 
-                if (currentRule.startsWith("different")) {
-                    const [currentRuleName, maybeDifferent] = currentRule.split(":");
+                const differentRule = new DifferentRule({attributeName, attributes, translations});
 
-                    if ("undefined" === typeof maybeDifferent) {
-                        throw new Error("No value defined for the rule \"different\".");
-                    }
-
-                    const different = maybeDifferent;
-                    const differentValue = data[different];
-
-                    if ("undefined" !== typeof value && null !== value && differentValue === value) {
-                        let error = null;
-
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
-                            error = `${property} should be different than ${different}.`;
-                        } else {
-                            error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", different);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                if (differentRule.match(currentRule) && differentRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            differentRule.getError()
+                        ]
+                    };
                 }
 
-                if (currentRule.startsWith("minimum")) {
-                    const [currentRuleName, maybeMinimum] = currentRule.split(":");
+                const minimumRule = new MinimumRule({attributeName, attributes, translations});
 
-                    if ("undefined" === typeof maybeMinimum) {
-                        throw new Error("No value defined for the rule \"minimum\".");
-                    }
-
-                    const maybeMinimumNumber = Number(maybeMinimum);
-
-                    if (!Number.isFinite(maybeMinimumNumber)) {
-                        throw new Error("No number defined for the rule \"minimum\".");
-                    }
-
-                    const minimum = maybeMinimumNumber;
-                    const typeofValue = typeof value;
-
-                    if ("undefined" !== typeofValue && null !== value) {
-                        if ("number" === typeof value && value < minimum) {
-                            let error = null;
-
-                            if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
-                                error = `${property} should be at least equals to ${minimum}.`;
-                            } else {
-                                error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", minimum);
-                            }
-
-                            return {
-                                ...currentErrors,
-                                [property]: [
-                                    ...currentErrors[property] || [],
-                                    error
-                                ]
-                            };
-                        }
-
-                        if ("string" === typeofValue && value.length < minimum) {
-                            let error = null;
-
-                            if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
-                                error = `${property} should have at least ${minimum} characters.`;
-                            } else {
-                                error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", minimum);
-                            }
-
-                            return {
-                                ...currentErrors,
-                                [property]: [
-                                    ...currentErrors[property] || [],
-                                    error
-                                ]
-                            };
-                        }
-                    }
-
-                    return currentErrors;
+                if (minimumRule.match(currentRule) && minimumRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            minimumRule.getError()
+                        ]
+                    };
                 }
 
-                if (currentRule.startsWith("maximum")) {
-                    const [currentRuleName, maybeMaximum] = currentRule.split(":");
+                const maximumRule = new MaximumRule({attributeName, attributes, translations});
 
-                    if ("undefined" === typeof maybeMaximum) {
-                        throw new Error("No value defined for the rule \"maximum\".");
-                    }
-
-                    const maybeMaximumNumber = Number(maybeMaximum);
-
-                    if (!Number.isFinite(maybeMaximumNumber)) {
-                        throw new Error("No number defined for the rule \"maximum\".");
-                    }
-
-                    const maximum = maybeMaximumNumber;
-                    const typeofValue = typeof value;
-
-                    if ("undefined" !== typeofValue && null !== value) {
-                        if ("number" === typeofValue && value > maximum) {
-                            let error = null;
-
-                            if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
-                                error = `${property} should be at most equals to ${maximum}.`;
-                            } else {
-                                error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", maximum);
-                            }
-
-                            return {
-                                ...currentErrors,
-                                [property]: [
-                                    ...currentErrors[property] || [],
-                                    error
-                                ]
-                            };
-                        }
-
-                        if ("string" === typeofValue && value.length > maximum) {
-                            return {
-                                ...currentErrors,
-                                [property]: [
-                                    ...currentErrors[property] || [],
-                                    `${property} should have at most ${maximum} characters.`
-                                ]
-                            };
-                        }
-                    }
-
-                    return currentErrors;
+                if (maximumRule.match(currentRule) && maximumRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            maximumRule.getError()
+                        ]
+                    };
                 }
 
-
-                if (currentRule.startsWith("in")) {
-                    const [currentRuleName, maybeIn] = currentRule.split(":");
-
-                    if ("undefined" === typeof maybeIn) {
-                        throw new Error(`No value defined for the rule "in".`);
-                    }
-
-                    const inValues = maybeIn.split(",").map(currentValue => currentValue.trim());
-
-                    if ("undefined" !== typeof value && null !== value && !inValues.includes(value)) {
-                        const inValuesText = inValues.join(", ");
-
-                        let error = null;
-
-                        if ("undefined" === typeof this.translations[property] || "undefined" === typeof this.translations[property][currentRuleName]) {
-                            error = `${property} should be one of the following: ${inValuesText}.`;
-                        } else {
-                            error = this.translations[property][currentRuleName].replace("{}", property).replace("{}", inValuesText);
-                        }
-
-                        return {
-                            ...currentErrors,
-                            [property]: [
-                                ...currentErrors[property] || [],
-                                error
-                            ]
-                        };
-                    }
-
-                    return currentErrors;
+                const inRule = new InRule({attributeName, attributes, translations});
+                if (inRule.match(currentRule) && inRule.hasError()) {
+                    return {
+                        ...currentErrors,
+                        [attributeName]: [
+                            ...currentErrors[attributeName] || [],
+                            inRule.getError()
+                        ]
+                    };
                 }
 
-                throw new Error(`Unrecognized rule: ${currentRule}.`);
+                return currentErrors;
             }, {});
 
             return {
